@@ -1,0 +1,26 @@
+package inframachine.engine.repository;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import inframachine.engine.model.Domain;
+
+
+public interface DomainRepository extends JpaRepository<Domain, Integer> {
+
+    @Query("""
+        SELECT DISTINCT p.primaryLayer
+        FROM placas p
+        WHERE p.isMapped = true
+            """)
+    List<String> getGroups();
+
+
+    @Query("""
+        SELECT p.id
+        FROM placas p
+        WHERE p.isMapped = true
+        AND p.primaryLayer = :primaryLayer
+            """)
+    List<Integer> getIdsByPrimaryLayer(String primaryLayer);
+
+}
