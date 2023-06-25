@@ -6,15 +6,15 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.0</version>
+		<version>3.1.1</version>
 		<relativePath/>
 	</parent>
 
-	<groupId>inframachine</groupId>
+	<groupId>infralearning</groupId>
 	<artifactId>engine</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>engine</name>
-	<description>AI Engine</description>
+	<description>Infra mount</description>
 
 	<properties>
 		<java.version>17</java.version>
@@ -43,7 +43,8 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+
+ </dependencies>
 
 	<build>
 		<plugins>

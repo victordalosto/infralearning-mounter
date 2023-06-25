@@ -3,6 +3,10 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+models/**
+logs/**
+old/**
+**/__pycache__/**
 
 ### STS ###
 .apt_generated

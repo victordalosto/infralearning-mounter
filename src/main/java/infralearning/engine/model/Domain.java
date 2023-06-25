@@ -1,4 +1,4 @@
-package inframachine.engine.model;
+package infralearning.engine.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

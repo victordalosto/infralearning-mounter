@@ -1,12 +1,12 @@
 {
   "properties": [
     {
-      "name": "inframachine.images.url",
+      "name": "images.url",
       "type": "java.lang.String",
       "description": "A description for 'inframachine.images.url'"
     },
     {
-      "name": "inframachine.mounting.url",
+      "name": "mounting.url",
       "type": "java.lang.String",
       "description": "A description for 'inframachine.mounting.url'"
     }
