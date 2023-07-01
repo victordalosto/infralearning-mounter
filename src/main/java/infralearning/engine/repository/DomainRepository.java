@@ -19,8 +19,8 @@ public interface DomainRepository extends JpaRepository<Domain, Integer> {
         SELECT p.id
         FROM placas p
         WHERE p.isMapped = true
-        AND p.primaryLayer = :primaryLayer
+        AND p.primaryLayer = :group
             """)
-    List<Integer> getIdsByPrimaryLayer(String primaryLayer);
+    List<Integer> getIdsByGroup(String group);
 
 }

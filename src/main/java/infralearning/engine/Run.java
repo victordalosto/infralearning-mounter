@@ -32,7 +32,7 @@ public class Run {
 
         log.info("Creating layers");
         for (String group : groups) {
-            List<Integer> ids = repository.getIdsByPrimaryLayer(group);
+            List<Integer> ids = repository.getIdsByGroup(group);
             folderHandler.createLayers(group, ids);
         }
 

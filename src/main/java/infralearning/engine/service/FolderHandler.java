@@ -6,7 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +25,7 @@ public class FolderHandler {
 
     private List<String> layers = List.of("IDENTIFIER", "CLASSIFIER");
 
-    private List<String> imagesInRepository = new ArrayList<>();
+    private Set<String> imagesInRepository = new HashSet<>();
 
 
     public void setup() throws IOException {
@@ -58,17 +61,24 @@ public class FolderHandler {
 
 
     private List<String> findImages(Integer id) {
-        return imagesInRepository.stream()
-                                 .filter(image -> image.startsWith(id.toString()))
-                                 .toList();
+        List<String> images = new ArrayList<>();
+        if (imagesInRepository.contains(id + ".jpg")) {
+            images.add(id + ".jpg");
+        }
+        for (int i=1; i<=20; i++) {
+            if (imagesInRepository.contains(id + "_" + i + ".jpg")) {
+                images.add(id + "_" + i + ".jpg");
+            }
+        }
+        return images;
     }
 
 
-    public List<String> fetchRepository(String directoryPath) throws IOException {
+    public Set<String> fetchRepository(String directoryPath) throws IOException {
         return Files.list(Paths.get(directoryPath))
                     .map(Path::getFileName)
                     .map(Path::toString)
-                    .toList();
+                    .collect(Collectors.toSet());
     }
 
 
