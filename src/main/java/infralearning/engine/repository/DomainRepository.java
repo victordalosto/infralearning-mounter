@@ -8,19 +8,19 @@ import infralearning.engine.model.Domain;
 public interface DomainRepository extends JpaRepository<Domain, Integer> {
 
     @Query("""
-        SELECT DISTINCT p.primaryLayer
-        FROM placas p
-        WHERE p.isMapped = true
-            """)
+            SELECT DISTINCT p.primaryLayer
+            FROM placas p
+            WHERE p.isMapped = true
+                """)
     List<String> getGroups();
 
-
+    
     @Query("""
-        SELECT p.id
-        FROM placas p
-        WHERE p.isMapped = true
-        AND p.primaryLayer = :group
-            """)
+            SELECT p.id
+            FROM placas p
+            WHERE p.isMapped = true
+            AND p.primaryLayer = :group
+                """)
     List<Integer> getIdsByGroup(String group);
 
 }

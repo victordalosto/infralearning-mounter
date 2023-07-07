@@ -11,10 +11,10 @@ public class Domain {
 
     @Id
     private Integer id;
-    
+
     @Column(name = "nome")
     private String primaryLayer;
-    
+
     @Column(name = "condicao")
     private String secondaryLayer;
 
@@ -24,4 +24,5 @@ public class Domain {
     @Column(name = "is_valid")
     private boolean isValid;
 
+    
 }

@@ -2,41 +2,46 @@ package infralearning.engine;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import infralearning.engine.repository.DomainRepository;
 import infralearning.engine.service.FolderHandler;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
-
 @Slf4j
-@Component
-public class Run {
+@SpringBootApplication
+public class Main {
 
     @Autowired
     private FolderHandler folderHandler;
 
     @Autowired
-    private DomainRepository repository;
+    private DomainRepository dbRepository;
 
 
     @PostConstruct
     public void init() throws InterruptedException, IOException {
-        Thread.sleep(3000);
 
-        log.info("Setting up folders");
+        log.warn("Setting up folders");
         folderHandler.setup();
 
-        log.info("Getting groups from database");
-        List<String> groups = repository.getGroups();
+        log.warn("Getting groups from database");
+        List<String> groups = dbRepository.getGroups();
 
-        log.info("Creating layers");
+        log.warn("Creating layers");
         for (String group : groups) {
-            List<Integer> ids = repository.getIdsByGroup(group);
+            log.warn("  Creating group: " +  group);
+            List<Integer> ids = dbRepository.getIdsByGroup(group);
             folderHandler.createLayers(group, ids);
         }
 
-        log.info("Done!");
+        log.warn("Done!");
     }
+
+
+	public static void main(String[] args) {
+		SpringApplication.run(Main.class, args);
+	}
 
 }
