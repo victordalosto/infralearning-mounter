@@ -11,9 +11,9 @@
 	</parent>
 
 	<groupId>infralearning</groupId>
-	<artifactId>engine</artifactId>
+	<artifactId>mounter</artifactId>
 	<version>1.0.0</version>
-	<name>engine</name>
+	<name>mounter</name>
 	<description>Infra mount</description>
 
 	<properties>

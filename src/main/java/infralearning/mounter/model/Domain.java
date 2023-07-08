@@ -1,4 +1,4 @@
-package infralearning.engine.model;
+package infralearning.mounter.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

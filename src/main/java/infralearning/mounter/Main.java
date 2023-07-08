@@ -1,11 +1,11 @@
-package infralearning.engine;
+package infralearning.mounter;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import infralearning.engine.repository.DomainRepository;
-import infralearning.engine.service.FolderHandler;
+import infralearning.mounter.repository.DomainRepository;
+import infralearning.mounter.service.FolderService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Main {
 
     @Autowired
-    private FolderHandler folderHandler;
+    private FolderService folderHandler;
 
     @Autowired
     private DomainRepository dbRepository;
@@ -31,9 +31,9 @@ public class Main {
 
         log.warn("Creating layers");
         for (String group : groups) {
-            log.warn("  Creating group: " +  group);
             List<Integer> ids = dbRepository.getIdsByGroup(group);
-            folderHandler.createLayers(group, ids);
+            int numOfImages = folderHandler.FoldersLayers(group, ids);
+            log.warn("  Creating group: " +  group + " with " + numOfImages + " images");
         }
 
         log.warn("Done!");

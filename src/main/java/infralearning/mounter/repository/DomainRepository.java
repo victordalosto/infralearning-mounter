@@ -1,8 +1,8 @@
-package infralearning.engine.repository;
+package infralearning.mounter.repository;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import infralearning.engine.model.Domain;
+import infralearning.mounter.model.Domain;
 
 
 public interface DomainRepository extends JpaRepository<Domain, Integer> {
