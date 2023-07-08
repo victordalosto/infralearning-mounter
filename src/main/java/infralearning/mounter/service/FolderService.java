@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import infralearning.mounter.handler.FolderHandler;
 import infralearning.mounter.model.Modulo;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -29,22 +28,25 @@ public class FolderService {
     @Autowired
     private FolderHandler handler;
 
-    @Setter
-    private int maxNumberOfImagesPerGroup = 100;
+    @Value("${mount.max_num_images_per_group}")
+    private int maxNumberOfImagesPerGroup;
 
-    @Setter
-    private int maxNumberOfImagesInterpolated = 1;
+    @Value("${mount.max_num_interpolated_images}")
+    private int maxNumberOfInterpolatedImages;
 
     private Set<String> imagesInRepository;
 
+    // private ExecutorService executor = Executors.newFixedThreadPool(6);
 
-    public void run(List<Modulo> modulos) throws IOException {
+
+    public void run(List<Modulo> modulos) throws IOException, InterruptedException {
         setup();
         for (Modulo modulo : modulos) {
             log.warn("");
             log.warn("Creating modulo: " + modulo.getName());
             runModulo(modulo);
         }
+        // executor.awaitTermination(24l, java.util.concurrent.TimeUnit.HOURS);
     }
 
 
@@ -63,7 +65,6 @@ public class FolderService {
         if (mountRoot == null || imagesInRepository == null) {
             handler.deleteAndCreateFolder(mountRoot);
             imagesInRepository = handler.fetchRepository(imagesRepositoryURL);
-            System.out.println("Size: " + imagesInRepository.size());
         }
     }
 
@@ -94,7 +95,7 @@ public class FolderService {
         if (imagesInRepository.contains(id + ".jpg")) {
             images.add(id + ".jpg");
         }
-        for (int i = 0; i < maxNumberOfImagesInterpolated; i++) {
+        for (int i = 0; i < maxNumberOfInterpolatedImages; i++) {
             if (imagesInRepository.contains(id + "_" + i + ".jpg")) {
                 images.add(id + "_" + i + ".jpg");
             }
@@ -104,16 +105,17 @@ public class FolderService {
 
 
     private void copyImageToFolders(Path folder, String image) {
-        try {
-            Path source = Paths.get(imagesRepositoryURL, image);
-            Path destination = Paths.get(folder.toString(), image);
-            Files.copy(source, destination, REPLACE_EXISTING);
-        } catch (IOException e) {
-            Path source = Paths.get(imagesRepositoryURL, image);
-            Path destination = Paths.get(folder.toString(), image);
-            log.error("Error copying image: " + source + " to " + destination);
-            // e.printStackTrace();
-        }
+        // executor.submit(() -> {
+            try {
+                Path source = Paths.get(imagesRepositoryURL, image);
+                Path destination = Paths.get(folder.toString(), image);
+                Files.copy(source, destination, REPLACE_EXISTING);
+            } catch (IOException e) {
+                Path source = Paths.get(imagesRepositoryURL, image);
+                Path destination = Paths.get(folder.toString(), image);
+                log.error("Error copying image: " + source + " to " + destination);
+            }
+        // });
     }
 
 }
