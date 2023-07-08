@@ -1,0 +1,19 @@
+[
+    {
+        "name": "DETECTION",
+        "groups": [
+            "null",
+            "not_null"
+        ]
+    },
+    {
+        "name": "CLASSIFICATION",
+        "groups": [
+            "advertencia",
+            "educativa",
+            "indicativa",
+            "regulamentacao",
+            "servicos"
+        ]
+    }
+]

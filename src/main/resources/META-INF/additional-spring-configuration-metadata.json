@@ -1,14 +1,22 @@
-{
-  "properties": [
-    {
-      "name": "images.url",
-      "type": "java.lang.String",
-      "description": "AWS images url'"
-    },
-    {
-      "name": "mounting.url",
-      "type": "java.lang.String",
-      "description": "Mmounting url'"
-    }
-  ]
-}
+{"properties": [
+  {
+    "name": "images.url",
+    "type": "java.lang.String",
+    "description": "AWS images url"
+  },
+  {
+    "name": "mounting.url",
+    "type": "java.lang.String",
+    "description": "Path to Mount the images"
+  },
+  {
+    "name": "mount.max_num_images_per_group",
+    "type": "java.lang.String",
+    "description": "Max number of images per group'"
+  },
+  {
+    "name": "mount.max_num_interpolated_images",
+    "type": "java.lang.String",
+    "description": "Max number of interpolated images"
+  }
+]}

@@ -5,16 +5,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import infralearning.mounter.handler.FolderHandler;
+import infralearning.mounter.model.Modulo;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 @Service
 public class FolderService {
 
@@ -27,76 +29,63 @@ public class FolderService {
     @Autowired
     private FolderHandler handler;
 
-    private List<String> activities = List.of("DETECTION", "CLASSIFICATION");
-    private Set<String> imagesInRepository = new HashSet<>();
-
+    @Setter
     private int maxNumberOfImagesPerGroup = 100;
+
+    @Setter
     private int maxNumberOfImagesInterpolated = 1;
 
-
-    public void setup() throws IOException {
-        handler.deleteAndCreateFolder(mountRoot);
-        imagesInRepository = fetchRepository(imagesRepositoryURL);
-    }
+    private Set<String> imagesInRepository;
 
 
-    
-    public int FoldersLayers(String group, List<Integer> imagesIDs) {
-        List<Path> folders = new ArrayList<>();
-        for (String activity : activities) {
-            Path folder = Paths.get(mountRoot, activity, getNameLayer(group, activity));
-            handler.createFolder(folder);
-            folders.add(folder);
+    public void run(List<Modulo> modulos) throws IOException {
+        setup();
+        for (Modulo modulo : modulos) {
+            log.warn("");
+            log.warn("Creating modulo: " + modulo.getName());
+            runModulo(modulo);
         }
-        int numImages = moveImagesToFolder(folders, imagesIDs);
-        return numImages;
+    }
+
+
+    private void runModulo(Modulo modulo) {
+        for (String group : modulo.getGroups()) {
+            Path folder = Paths.get(mountRoot, modulo.getName(), group);
+            handler.createFolder(folder);
+            List<Integer> imagesIDs = modulo.getImagesIDs().get(group);
+            int numOfImages = moveImagesToFolder(folder, imagesIDs);
+            log.warn("  Creating group: " +  group + " with " + numOfImages + " images");
+        }
+    }
+
+
+    private void setup() throws IOException {
+        if (mountRoot == null || imagesInRepository == null) {
+            handler.deleteAndCreateFolder(mountRoot);
+            imagesInRepository = handler.fetchRepository(imagesRepositoryURL);
+            System.out.println("Size: " + imagesInRepository.size());
+        }
     }
 
     
-
-
-    private Set<String> fetchRepository(String directoryPath) throws IOException {
-        return Files.list(Paths.get(directoryPath))
-                    .map(Path::getFileName)
-                    .map(Path::toString)
-                    .collect(Collectors.toSet());
-    }
-
-
-    private String getNameLayer(String group, String folderLayerCategory) {
-        if (folderLayerCategory.toLowerCase().contains("DETECTION"))
-            return (group.toLowerCase().equals("null") ? "null" : "not_null");
-        else
-            return group;
-    }
-
-
-    private int moveImagesToFolder(List<Path> folders, List<Integer> imagesIDs) {
+    private int moveImagesToFolder(Path folder, List<Integer> imagesIDs) {
         int count = 0;
         for (Integer id : imagesIDs) {
             List<String> images = listImagesWithSameId(id, imagesInRepository);
             for (String image : images) {
-                copyImageToFolders(folders, image);
-                if (++count >= maxNumberOfImagesPerGroup) {
-                    return count;
+                copyImageToFolders(folder, image);
+                if (folder.getParent().getFileName().toString().equals("DETECTION")) {
+                    if (++count >= 5*maxNumberOfImagesPerGroup) {
+                        return count;
+                    }
+                } else {
+                    if (++count >= maxNumberOfImagesPerGroup) {
+                        return count;
+                    }
                 }
             }
-        
         }
         return count;
-    }
-
-
-
-    private void copyImageToFolders(List<Path> folders, String image) {
-        try {
-            Path source = Paths.get(imagesRepositoryURL, image);
-            for (Path folder : folders) {
-                Files.copy(source, Paths.get(folder.toString(), image), REPLACE_EXISTING);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -105,12 +94,26 @@ public class FolderService {
         if (imagesInRepository.contains(id + ".jpg")) {
             images.add(id + ".jpg");
         }
-        for (int i = 0; i <= maxNumberOfImagesInterpolated; i++) {
+        for (int i = 0; i < maxNumberOfImagesInterpolated; i++) {
             if (imagesInRepository.contains(id + "_" + i + ".jpg")) {
                 images.add(id + "_" + i + ".jpg");
             }
         }
         return images;
+    }
+
+
+    private void copyImageToFolders(Path folder, String image) {
+        try {
+            Path source = Paths.get(imagesRepositoryURL, image);
+            Path destination = Paths.get(folder.toString(), image);
+            Files.copy(source, destination, REPLACE_EXISTING);
+        } catch (IOException e) {
+            Path source = Paths.get(imagesRepositoryURL, image);
+            Path destination = Paths.get(folder.toString(), image);
+            log.error("Error copying image: " + source + " to " + destination);
+            // e.printStackTrace();
+        }
     }
 
 }
