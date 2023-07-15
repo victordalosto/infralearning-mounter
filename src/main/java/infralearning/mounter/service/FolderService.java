@@ -76,11 +76,11 @@ public class FolderService {
             for (String image : images) {
                 copyImageToFolders(folder, image);
                 if (folder.getParent().getFileName().toString().equals("DETECTION")) {
-                    if (++count >= 5*maxNumberOfImagesPerGroup) {
+                    if (++count >= 5*maxNumberOfImagesPerGroup * maxNumberOfInterpolatedImages) {
                         return count;
                     }
                 } else {
-                    if (++count >= maxNumberOfImagesPerGroup) {
+                    if (++count >= maxNumberOfImagesPerGroup * maxNumberOfInterpolatedImages) {
                         return count;
                     }
                 }
